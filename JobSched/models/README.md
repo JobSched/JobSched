@@ -1,0 +1,1 @@
+In diesem Ordner werden standardmäßig die gguf-Dateien gespeichert.
