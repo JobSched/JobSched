@@ -1,0 +1,10 @@
+Solve the following job scheduling problem on a single machine. The system contains 5 jobs.
+Each job has only one step. Each job has a processing time and a due date. If the processing of a job finishes after its due date, it is delayed. Only one job at a time can be processed on the machine. The processing of a job can not be interrupted. Minimize the amount of delayed jobs. It is possible, that there is no optimal job order, so some jobs might always be delayed.
+
+Job 1: processing time: 3, due date: 5.
+Job 2: processing time: 4, due date: 4.
+Job 3: processing time: 5, due date: 2.
+Job 4: processing time: 2, due date: 5.
+Job 5: processing time: 3, due date: 9.
+
+Your answer should only contain the final job order and the starting and finish time of each job. Use the format Job ID: start time -> finishing time, due date. e.g. J2: 0 -> 4, 4. Do not output any other text or explanation as answer.

@@ -1,0 +1,7 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Project Path="JobSched/JobSched.vcxproj" Id="aa246ef2-35e5-4308-ab9f-303fa2ff6070" />
+</Solution>
