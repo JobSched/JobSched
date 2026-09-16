@@ -13,3 +13,4 @@
 - Das Programm wird von *main.h* aus gestartet.
 - In *main.h* wird eine Instanz der Klasse *job_sched_llm* initialisiert.
 - Die Klasse *job_sched_llm* übernimmt dann das eigentliche Laden des LLMs, die Vorbereitungs der Prompts und die eigentliche Anfrage ans LLM.
+- Die Klasse *job_sched_exception* dient aktuell nur der übersichtlicheren Fehlerbehandlung.
