@@ -30,35 +30,36 @@ public:
 		init();
 	}
 
-	// set parameters for model and context
 	void init() {
 		llama_backend_init();
 
 		// disable default llama logging
 		llama_log_set([](auto, const char* text, auto) {}, nullptr);
 
+		// set model parameters
 		model_parameter = llama_model_default_params();
 		std::string model_path = "models/Phi-3-mini-128k-instruct_f16.gguf";
 
+		// set context parameters
 		context_parameter = llama_context_default_params();
-		context_parameter.n_ctx = 1024 * 12;
+		context_parameter.n_ctx = 1024 * 24;
 
 		std::cout << "Loading LLM... ";
 
-		// load LLM
+		// load model
 		model = llama_model_load_from_file(model_path.c_str(), model_parameter);
 		if (!model) {
 			throw job_sched_exception("Could not load the LLM.");
 		}
 
-		// create context
+		// init context
 		context = llama_init_from_model(model, context_parameter);
 		if (!context) {
 			llama_model_free(model);
 			throw job_sched_exception("Could not create LLM context.");
 		}
 
-		// get Vocabulary from the LLM
+		// get Vocabulary from the model
 		vocab = llama_model_get_vocab(model);
 
 		std::cout << "-> completed" << std::endl;
@@ -83,9 +84,9 @@ public:
 	}
 
 	void print_prompts() {
-		std::cout << "System Prompt: " << std::endl;
+		std::cout << "System Prompt:" << std::endl;
 		std::cout << system_prompt << std::endl << std::endl;
-		std::cout << "User Prompt: " << std::endl;
+		std::cout << "User Prompt:" << std::endl;
 		std::cout << user_prompt << std::endl << std::endl;
 	}
 
@@ -125,9 +126,8 @@ public:
 		apply_chat_template();
 		tokenize_prompt();
 
-		// create and adjust sampler chain
-		llama_sampler* sampler;
-		sampler = llama_sampler_chain_init(llama_sampler_chain_default_params());
+		// create and adjust sampler
+		llama_sampler* sampler = llama_sampler_chain_init(llama_sampler_chain_default_params());
 
 		llama_sampler_chain_add(sampler, llama_sampler_init_top_k(50));
 		llama_sampler_chain_add(sampler, llama_sampler_init_top_p(0.95f, 1));
@@ -141,9 +141,9 @@ public:
 			throw job_sched_exception("Could not create sampler.");
 		}
 
-		std::cout << "Answer: " << std::endl;
+		std::cout << "Answer:" << std::endl;
 
-		// decode tokens of the prompt
+		// decode / process tokens of the prompt
 		llama_decode(context, llama_batch_get_one(tokens.data(), tokens.size()));
 		
 		// loop for generating the answer tokens
@@ -165,7 +165,7 @@ public:
 				std::cout << std::string(new_token_buffer, new_token_length);
 			}
 
-			// decode the newly generated token
+			// decode / process the newly generated token
 			llama_decode(context, llama_batch_get_one(&new_token, 1));
 		}
 		std::cout << std::endl;
