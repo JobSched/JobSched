@@ -141,31 +141,31 @@ public:
 			throw job_sched_exception("Could not create sampler.");
 		}
 
-		// decode prompt
+		std::cout << "Answer: " << std::endl;
+
+		// decode tokens of the prompt
 		llama_decode(context, llama_batch_get_one(tokens.data(), tokens.size()));
-
-		// generate and print the answer
-		std::cout << "Answer: " << std::flush;
-
+		
+		// loop for generating the answer tokens
 		for (int i = 0; i < 500; i++) {
-			// generate next token
+			// generate new token
 			llama_token new_token = llama_sampler_sample(sampler, context, -1);
 			llama_sampler_accept(sampler, new_token);
 
-			// terminate when reaching an end token
+			// terminate, when the newly generated token is an end token
 			if (llama_vocab_is_eog(vocab, new_token)) {
 				break;
 			}
 
-			// add token to the tokens vector and print it
+			// add the newly generated token to the tokens vector and print it
 			tokens.push_back(new_token);
-			char token_buffer[128];
-			int n = llama_token_to_piece(vocab, new_token, token_buffer, sizeof(token_buffer), 0, false);
-			if (n > 0) {
-				std::cout << std::string(token_buffer, n) << std::flush;
+			char new_token_buffer[128];
+			int new_token_length = llama_token_to_piece(vocab, new_token, new_token_buffer, sizeof(new_token_buffer), 0, false);
+			if (new_token_length > 0) {
+				std::cout << std::string(new_token_buffer, new_token_length);
 			}
 
-			// decode next token
+			// decode the newly generated token
 			llama_decode(context, llama_batch_get_one(&new_token, 1));
 		}
 		std::cout << std::endl;
