@@ -90,20 +90,18 @@ public:
 	}
 
 	void apply_chat_template() {
-		// create char vector from system promt for llama chat template
+		// create vector for the chat messages
+		std::vector<llama_chat_message> messages;
+
+		// add system promt to the messages
 		std::vector<char> system_prompt_vector(system_prompt.begin(), system_prompt.end());
 		system_prompt_vector.push_back('\0');
-		char* system_prompt_char = system_prompt_vector.data();
+		messages.push_back({ "system", system_prompt_vector.data() });
 
-		// create char vector from user promt for llama chat template
+		// add user prompt to the messages
 		std::vector<char> user_prompt_vector(user_prompt.begin(), user_prompt.end());
 		user_prompt_vector.push_back('\0');
-		char* user_prompt_char = user_prompt_vector.data();
-
-		// append prompts to messages vector
-		std::vector<llama_chat_message> messages;
-		messages.push_back({ "system", system_prompt_char });
-		messages.push_back({ "user",  user_prompt_char });
+		messages.push_back({ "user",  user_prompt_vector.data() });
 
 		// apply acutal llama chat template
 		std::vector<char> messages_buffer(messages.size() * 2);
@@ -113,9 +111,7 @@ public:
 			messages_buffer.resize(messages_buffer_length);
 			messages_buffer_length = llama_chat_apply_template(nullptr, messages.data(), messages.size(), true, messages_buffer.data(), messages_buffer.size());
 		}
-		std::string temp_prompt(messages_buffer.begin(), messages_buffer.begin() + messages_buffer_length);
-
-		prompt = temp_prompt;
+		prompt = std::string(messages_buffer.begin(), messages_buffer.begin() + messages_buffer_length);
 	}
 
 	void tokenize_prompt() {
