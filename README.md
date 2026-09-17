@@ -14,3 +14,8 @@
 - In *main.h* wird eine Instanz der Klasse *job_sched_llm* initialisiert.
 - Die Klasse *job_sched_llm* übernimmt dann das eigentliche Laden des LLMs, die Vorbereitungs der Prompts und die eigentliche Anfrage ans LLM.
 - Die Klasse *job_sched_exception* dient aktuell nur der übersichtlicheren Fehlerbehandlung.
+
+## Verwendung anderer Modelle
+
+- Der Quellcode ist aktuell explizit auf das Modell Phi-3 abgestimmt.
+- Soll ein anderes Modell verwendet werden, so muss in *job_sched_llm.h* der Pfad zur gewünschten gguf-Datei angepasst werden. Zudem muss das Attribut *chat_template* entweder auf den *nullptr* gesetzt werden oder auf ein zum Modell passenden Wert.
