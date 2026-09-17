@@ -115,9 +115,9 @@ public:
 	}
 
 	void tokenize_prompt() {
-		std::vector<llama_token> prompt_tokens(prompt.length() + 10);
-		int n_prompt = llama_tokenize(vocab, prompt.c_str(), prompt.length(), prompt_tokens.data(), prompt_tokens.size(), false, false);
-		prompt_tokens.resize(n_prompt);
+		std::vector<llama_token> prompt_tokens(prompt.length() + 100);
+		int prompt_size = llama_tokenize(vocab, prompt.c_str(), prompt.length(), prompt_tokens.data(), prompt_tokens.size(), false, false);
+		prompt_tokens.resize(prompt_size);
 		tokens.insert(tokens.end(), prompt_tokens.begin(), prompt_tokens.end());
 	}
 
