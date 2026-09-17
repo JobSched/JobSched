@@ -18,6 +18,7 @@ class job_sched_llm
 	llama_context_params context_parameter;
 
 	const llama_vocab* vocab;
+	const char* chat_template;
 
 	std::string system_prompt;
 	std::string user_prompt;
@@ -39,6 +40,7 @@ public:
 		// set model parameters
 		model_parameter = llama_model_default_params();
 		std::string model_path = "models/Phi-3-mini-128k-instruct_f16.gguf";
+		chat_template = "phi3"; // "phi3" for model Phi-3; if set to nullptr the chat template is extracted from the gguf file
 
 		// set context parameters
 		context_parameter = llama_context_default_params();
@@ -104,13 +106,13 @@ public:
 		user_prompt_vector.push_back('\0');
 		messages.push_back({ "user",  user_prompt_vector.data() });
 
-		// apply acutal llama chat template
+		// apply chat template
 		std::vector<char> messages_buffer(messages.size() * 2);
-		int32_t messages_buffer_length = llama_chat_apply_template(nullptr, messages.data(), messages.size(), true, messages_buffer.data(), messages_buffer.size());
+		int32_t messages_buffer_length = llama_chat_apply_template(chat_template, messages.data(), messages.size(), true, messages_buffer.data(), messages_buffer.size());
 
 		if (messages_buffer_length > (int)messages_buffer.size()) {
 			messages_buffer.resize(messages_buffer_length);
-			messages_buffer_length = llama_chat_apply_template(nullptr, messages.data(), messages.size(), true, messages_buffer.data(), messages_buffer.size());
+			messages_buffer_length = llama_chat_apply_template(chat_template, messages.data(), messages.size(), true, messages_buffer.data(), messages_buffer.size());
 		}
 		prompt = std::string(messages_buffer.begin(), messages_buffer.begin() + messages_buffer_length);
 	}
